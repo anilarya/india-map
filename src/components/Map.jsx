@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export default function Map() {
     const [weatherData, setWeatherData] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(null); // To keep track of the selected city
 
     const cities = [
         { name: 'New Delhi', lat: 28.6139, long: 77.209 },
@@ -88,6 +89,7 @@ export default function Map() {
                     'MEDIUM': '#0fa0fa',
                     'MINOR': '#bada55',
                     'HOT': '#ff0000', // Red for high temperature
+                    'SELECTED': '#ffeb3b', // Yellow for selected bubble
                     defaultFill: '#dddddd'
                 },
                 setProjection: function (element) {
@@ -110,7 +112,7 @@ export default function Map() {
                 latitude: city.latitude,
                 longitude: city.longitude,
                 radius: 5 + (city.temp - minTemp) / (maxTemp - minTemp) * 15, // Relative radius based on temperature
-                fillKey: city.temp > 30 ? 'HOT' : 'MEDIUM', // Red for hot temperatures
+                fillKey: city.name === selectedCity ? 'SELECTED' : city.temp > 30 ? 'HOT' : 'MEDIUM', // Yellow if selected, Red for hot temperatures
                 temp: city.temp,
             }));
 
@@ -120,7 +122,11 @@ export default function Map() {
                 }
             });
         }
-    }, [weatherData]);
+    }, [weatherData, selectedCity]);
+
+    const handleCityClick = (cityName) => {
+        setSelectedCity(cityName);
+    };
 
     return (
         <div style={containerStyle}>
@@ -128,7 +134,11 @@ export default function Map() {
                 <h2>Weather Information</h2>
                 <div style={cityListStyle}>
                     {weatherData.map(city => (
-                        <div key={city.name} style={cityInfoStyle}>
+                        <div
+                            key={city.name}
+                            style={cityInfoStyle(city.name === selectedCity)}
+                            onClick={() => handleCityClick(city.name)}
+                        >
                             <strong>{city.name}</strong>: {city.temp}°C
                         </div>
                     ))}
@@ -171,7 +181,12 @@ const mapStyle = {
     marginLeft: '270px', // Account for the fixed sidebar width
 };
 
-const cityInfoStyle = {
+const cityInfoStyle = (isSelected) => ({
     margin: '10px 0',
     fontSize: '16px',
-};
+    cursor: 'pointer',
+    backgroundColor: isSelected ? '#ffeb3b' : 'transparent', // Highlight selected city
+    padding: '5px',
+    borderRadius: '4px',
+});
+

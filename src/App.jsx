@@ -9,7 +9,7 @@ function App() {
         <div style={appStyle}>
             {/* <Header /> */}
             <main style={mainStyle}>
-                <h2>Welcome to My React App</h2> 
+                <h2>Temeratures of Capital cities of Indian States</h2> 
                 <Map />
             </main>
             <Footer />
