@@ -47,7 +47,7 @@ export default function Map() {
             );
             const data = responses.map((response, index) => ({
                 name: cities[index].name,
-                latitude: cities[index].lat,
+                latitude: cities[index].lat-0.8,
                 longitude: cities[index].long,
                 temp: response.data.main.temp,
             }));
